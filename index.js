@@ -12,7 +12,7 @@ function main(argv){
 	var root = config.root || '.';
 	var port = config.port || 3000;
 
-	http.createServer(function(req,res){
+	var server = http.createServer(function(req,res){
 		var urlInfo = parseURL(root,req.url);
 		
 		validateFiles(urlInfo.pathnames,function(err,pathnames){
@@ -33,6 +33,11 @@ function main(argv){
 	}).listen(port,function(){
 		console.log('running on port 3000!!');
 		});
+	process.on('SIGTERM',function(){
+		server.close(function(){
+			process.exit(0);
+		});
+	});
 }
 
 function validateFiles(pathnames,callback){
